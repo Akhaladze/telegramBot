@@ -24,3 +24,15 @@ How to install:
 
 How to configure:
 
+
+getUpdates.php  - main project file. You dont need chenge here anything;
+
+values01.json   - configuration file, here you can put key=>value and assign which text that user type in Telegram Bot will meet appropriate shell commands (you can use it not only with shell commands)
+
+last_message.txt - here is a txt file with last processed message udpate_id. Dont touch it, it must fullfilment in a first run;
+
+config.json      - here is place where you must put your own TelegramBot APIKEY (get from Telegram admin bot: @GotFather)
+
+Thats all that you need!
+
+
