@@ -4,12 +4,12 @@
 
 /**
  * @author G.Akhaladze <4468618@gmail.com>
- * @Simple script which performs execution shell script depends customer keywords in telegram bot:
- * @ 	- scripts running via crontab service with defined interval and collect users message updates
- * @ 	- scripn includes two external configuration files: with secured params and bussness logic 
- * @ 	- script save latest processed message id and can avoid de duplicates shell commands executions 
- * @    - script have simlple integface which can be used for initial diagnostic and maintenance 
- * @ 	- script writen by clear PHP and not needed any critical depends 
+ * Simple script which performs execution shell script depends customer keywords in telegram bot:
+ *  	- scripts running via crontab service with defined interval and collect users message updates
+ *  	- scripn includes two external configuration files: with secured params and bussness logic 
+ *  	- script save latest processed message id and can avoid de duplicates shell commands executions 
+ *      - script have simlple integface which can be used for initial diagnostic and maintenance 
+ *  	- script writen by clear PHP and not needed any critical depends 
  */
 
 class Botpocessor 
@@ -80,7 +80,7 @@ public function getUpdates() {
 }
 
 /*	Provide last message id value updates	*/
-private function updateLatestMessageId($last_message_id) {
+public function updateLatestMessageId($last_message_id) {
 	
 	$last_message_id = $last_message_id . "\n";
 	$last_message_filename = fopen("/var/www.api/telegramBot/last_message.txt", "w");
@@ -135,10 +135,12 @@ public function getCompare($updatesArray, $searchArray) {
 
 }
 
+$bp = new Botpocessor();
 
-$searchArray = Botpocessor::initSearchValues();
-$updatesArray = Botpocessor::getUpdates();
-$getCompare = Botpocessor::getCompare($updatesArray, $searchArray);
+$searchArray = $bp->initSearchValues();
+$updatesArray = $bp->getUpdates();
+$getCompare = $bp->getCompare($updatesArray, $searchArray);
+
 
 
 echo "<h2>Stats</h2>";
