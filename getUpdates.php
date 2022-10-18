@@ -109,9 +109,10 @@ public function getCompare($updatesArray, $searchArray) {
 						$toCompare = mb_strtolower($toCompare, 'UTF-8');
 				
 							if ($toCompare == $val) {
-								// Shell execution, when it needed
-								// $output = shell_exec($keyData);
-								$output = 'Shell command';
+								
+								$output = shell_exec($keyData);
+								//$output = "$keyData";
+								//$output = preg_split("#[\r\n]+#", $output_text);
 								$result = "same value, Lunux cmd: " .  $keyData . " Output: " . $output;
 							}
 
