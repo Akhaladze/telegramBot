@@ -11,16 +11,17 @@ Simple script which performs execution shell script depends customer keywords in
   	- script writen by clear PHP and not needed any critical depends 
 
 Requrements:
-- linux OS;
-- nginx/apache2;
+- linux OS (fedora/debian);
+- nginx(recomended)/apache2;
 - php7.4 (tested);
-- common libs and tools like git, mbstring, certbot;
+- common libs and packeges tools like git, mbstring, certbot, nginx/apache2, ssh;
 
 
 How to install:
 - make git clone to web-root folder and configure your web server to serve php scripts (recomended php-fpm);
 - script have no dependency and easy to integrate into php/python project as well as working alone;
-- find follow configuration files and put your owd params and settings
+- find following configuration files and put your own params for your needs; 
+
 
 How to configure:
 
