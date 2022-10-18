@@ -1,17 +1,24 @@
 <?php
 /*	Set debug env option for developer */
-	if ($_SERVER['REMOTE_ADDR'] != '95.158.43.189') include('envDev.php');
+	if ($_SERVER['REMOTE_ADDR'] == '95.158.43.189') require('envDev.php');
+
+/**
+ * @author G.Akhaladze <4468618@gmail.com>
+ * @Simple script which performs execution shell script depends customer keywords in telegram bot:
+ * @ 	- scripts running via crontab service with defined interval and collect users message updates
+ * @ 	- scripn includes two external configuration files: with secured params and bussness logic 
+ * @ 	- script save latest processed message id and can avoid de duplicates shell commands executions 
+ * @    - script have simlple integface which can be used for initial diagnostic and maintenance 
+ * @ 	- script writen by clear PHP and not needed any critical depends 
+ */
 
 class Botpocessor 
 {
 
 
-/*
-
-
-
+/*	@params - no input params needed, aka construct
+	@return - (Array) with key=>value pairs from configuration with user keywords and shell commands
 */
-
 
 public function initSearchValues() {
 	
@@ -36,12 +43,8 @@ public function initSearchValues() {
 }
 
 
-/* 	Check initialization status 
 
-	
-
-*/
-
+/* 	Upload actual updates from telegram bot, check and avoid already processed messages and update last_message_id value */
 public function getUpdates() {
 
 /* 	Load and configure initial params  */
@@ -56,25 +59,27 @@ public function getUpdates() {
 /*  Load updates from telegrab bot */
 	$updates = json_decode(file_get_contents($mainURL ."/getUpdates"), FALSE);
 	
+	
 /*  Select just not processed updetes (messages) */	
 	foreach ($updates->result as $key=>$value) {
 		(int) $val_bot = $value->update_id;
 		(int) $val_last = $last_message_id;
+		
 		if ((int)$val_last < (int)$val_bot) {
-			echo "Going Forward";
+			if ($config['env'] == 'Debug') echo "Message (update_id:" . $val_bot . ") actions not needed <br>";
 		} 
 		
 		else if ((int)$val_last >= (int)$val_bot) {	
-			echo "This message updates has been processed before " . $key;
+			if ($config['env'] == 'Debug') echo "Message (update_id:" . $val_bot . ") updates has been processed already <br>" ;
 			unset ($updates->result[$key]);
 		}
 	}
 	
-	return $updates;
+	return (!empty($updates)) ? $resArray = $updates : $resArray = [];
 
 }
 
-
+/*	Provide last message id value updates	*/
 private function updateLatestMessageId($last_message_id) {
 	
 	$last_message_id = $last_message_id . "\n";
@@ -85,13 +90,14 @@ private function updateLatestMessageId($last_message_id) {
 	return 0;
 }
 
+/*	Provides user message compare with pre-configured dictionary. Perform appropriate shell commands and manage last procesed message id updating */
 public function getCompare($updatesArray, $searchArray) {
 	$ii=0;
 	if (isset($updatesArray->ok) && $updatesArray->ok == 1) {
 
 		foreach($updatesArray->result as $job) {
 		
-		/* 	Leave just chat messages types */
+/* 	Leave just chat messages types not associated with commands (/start, /help ect.) */
 		
 			if (!isset($job->message->entities[0]->type )) {
 				
@@ -103,13 +109,13 @@ public function getCompare($updatesArray, $searchArray) {
 						$toCompare = mb_strtolower($toCompare, 'UTF-8');
 				
 							if ($toCompare == $val) {
-					
-								//$output = shell_exec($keyData);
-								$output = 'TTT';
-								$result = "SAME VALUES, Lunux cmd: " .  $keyData . " Output: " . $output;
+								// Shell execution, when it needed
+								// $output = shell_exec($keyData);
+								$output = 'Shell command';
+								$result = "same value, Lunux cmd: " .  $keyData . " Output: " . $output;
 							}
 
-							else {$result = "not same";}
+							else {$result = "not same value";}
 						
 						$resArray[$ii] = "SearchValue: "  .  $val . " and User Message "  . $toCompare . " is " .  $result . " <br>";
 						$ii++;
@@ -121,21 +127,10 @@ public function getCompare($updatesArray, $searchArray) {
 		}
 		
 	}
-	return $resArray;
+	
+	return (!empty($resArray)) ?  $resArray : $resArray = [];
 }
 
-
-
-public function runCMD($cmd) {
-	
-	/* If messages equvalented - run linux shell command appropriate to loaded values */
-	
-	/* Mark message as readed changing last message id value (file: last_message.txt) */
-	
-	return $result;
-	
-	
-}
 
 
 }
@@ -144,12 +139,15 @@ public function runCMD($cmd) {
 $searchArray = Botpocessor::initSearchValues();
 $updatesArray = Botpocessor::getUpdates();
 $getCompare = Botpocessor::getCompare($updatesArray, $searchArray);
-echo "<h2>Results</h2>";
-echo "<h3>Search Array</h3>";
-var_dump($searchArray);
-echo "<h3>Updates Array</h3>";
-var_dump($updatesArray);
-echo "<h3>Compare Result</h3>";
-var_dump($getCompare);
+
+
+echo "<h2>Stats</h2>";
+echo "<h3>Search values</h3>";
+if ($searchArray) var_dump($searchArray);
+echo "<h3>Updates values from Telegram Bot</h3>";
+if ($updatesArray) var_dump($updatesArray);
+echo "<h3>Message updates processing details....</h3>"; 
+if ($getCompare) {var_dump($getCompare);} 
+else { echo "No actual messages to updates";}
 
 ?>
