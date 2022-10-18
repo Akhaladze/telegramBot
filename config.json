@@ -1,0 +1,8 @@
+{
+        "valueFileName" : "values01.json",
+        "APIKEY" : "5434324576:GGFFJJJK0ZL17CQMiGSDQvLHHHEU",
+        "BaseURL": "https://api.telegram.org/bot",
+        "last_message_filename": "last_message.txt",
+        "devIP" : "95.158.0.0",
+        "env" : "Debug"
+}
