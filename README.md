@@ -1,4 +1,5 @@
-# telegramBot
+#  Telegram Bot in 20 minutes, it's easy!
+
 Simple telegram bot script for php enviroment which you can deploy and configure in 30 minutes!
 
 Capatibilities and futures:
